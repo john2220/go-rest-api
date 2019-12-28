@@ -111,6 +111,7 @@ func main() {
 	books = append(books, Book{ID: "1", Isbn: "sdf980", Title: "Book one", Author: &Author {Firstname: "John", Lastname: "Dodo"}})
 	books = append(books, Book{ID: "2", Isbn: "3240", Title: "Book two", Author: &Author {Firstname: "Anna", Lastname: "Karenina"}})
 
+	// Routes
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
 	r.HandleFunc("/api/books", createBook).Methods("POST")
