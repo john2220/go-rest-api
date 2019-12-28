@@ -7,6 +7,14 @@ import (
 	"math/rand"
 	"strconv"
 	"github.com/gorilla/mux"
+	"context"
+	// "time"
+	// "fmt"
+
+	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // Book Struct(Model)
@@ -81,6 +89,20 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func GetClient() *mongo.Client {
+    clientOptions := options.Client().ApplyURI("mongodb+srv://johnjohn:<password>@cluster0-601z6.mongodb.net/test?retryWrites=true&w=majority")
+    client, err := mongo.NewClient(clientOptions)
+    if err != nil {
+        log.Fatal(err)
+    }
+    err = client.Connect(context.Background())
+    if err != nil {
+        log.Fatal(err)
+    }
+    return client
+}
+
+
 func main() {
 	// Init Router
 	r := mux.NewRouter()
@@ -95,6 +117,34 @@ func main() {
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
+	// client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://johnjohn:<password>@cluster0-601z6.mongodb.net/test?retryWrites=true&w=majority"))
+	// if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	// 	err = client.Connect(ctx)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	defer client.Disconnect(ctx)
+	// 	err = client.Ping(ctx, readpref.Primary())
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// databases, err := client.ListDatabaseNames(ctx, bson.M{})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(databases)
+
+  c := GetClient()
+    err := c.Ping(context.Background(), readpref.Primary())
+    if err != nil {
+        log.Fatal("Couldn't connect to the database", err)
+    } else {
+        log.Println("Connected!")
+    }
+    
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
 
