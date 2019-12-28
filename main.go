@@ -89,6 +89,7 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 
+// connection function
 func GetClient() *mongo.Client {
     clientOptions := options.Client().ApplyURI("mongodb+srv://johnjohn:<password>@cluster0-601z6.mongodb.net/test?retryWrites=true&w=majority")
     client, err := mongo.NewClient(clientOptions)
